@@ -163,31 +163,34 @@ class JsClient
                         return
 
             else # proxy
-                #console.log '[BitShares-JS] pass-through\t',method,params
-                this_error_handler=(error)->
-                    err = error
-                    handle_response intercept=false
-                try
-                    promise = @rpc_pass_through.request method, params, this_error_handler
-                    promise.then(
-                        (response)->
-                            if response.result is undefined
-                                console.log(
-                                    'WARNING: malformed response'
-                                    response, method, params
-                                )
-                            
-                            ret = response.result
-                            handle_response intercept=false
-                            return
-                        (error)->
-                            err = error
-                            handle_response intercept=false
-                            return
-                    )
-                catch error
-                    err = error
-                    handle_response intercept=false
+                console.log '[BitShares-JS] pass-through\t',method,params
+                err = "chain discontinued"
+                handle_response intercept=false
+                return
+                # this_error_handler=(error)->
+                #     err = error
+                #     handle_response intercept=false
+                # try
+                #     promise = @rpc_pass_through.request method, params, this_error_handler
+                #     promise.then(
+                #         (response)->
+                #             if response.result is undefined
+                #                 console.log(
+                #                     'WARNING: malformed response'
+                #                     response, method, params
+                #                 )
+                #             
+                #             ret = response.result
+                #             handle_response intercept=false
+                #             return
+                #         (error)->
+                #             err = error
+                #             handle_response intercept=false
+                #             return
+                #     )
+                # catch error
+                #     err = error
+                #     handle_response intercept=false
             
             defer.promise
         )(method, params, error_handler)

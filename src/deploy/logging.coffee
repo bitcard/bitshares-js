@@ -1,6 +1,6 @@
 module.exports=
-    rpc_hide: #{}
-        ## {} means hide nothing
+    rpc_hide: {}
+        ### {} means hide nothing
         hide_all:on
         get_info: on
         get_config: on

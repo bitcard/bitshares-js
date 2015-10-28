@@ -36,7 +36,7 @@ class WalletAPI
         
         @blockchain_api = new BlockchainAPI @rpc
         @chain_interface = new ChainInterface @blockchain_api, @relay.chain_id
-        @login_guest()
+        # @login_guest()
     
     login_guest:->
         #console.log '... login_guest'
@@ -350,17 +350,24 @@ class WalletAPI
             #)
     
     get_transaction_fee:(asset_name_or_id = 0)->
-        LE.throw "jslib_wallet.must_be_opened" unless @wallet
-        @relay.init().then =>
-            q.all([
-                @chain_interface.convert_base_asset_amount(
-                    asset_name_or_id
-                    @relay.network_fee_amount +
-                    @relay.relay_fee_amount
-                )
-            ]).spread (total_fee)=>
-                asset_id: total_fee.asset_id
-                amount: total_fee.amount
+        defer = q.defer()
+        defer.resolve(
+            transaction_fee:
+                asset_id: 0
+                amount: 100000
+        )
+        defer.promise
+        # LE.throw "jslib_wallet.must_be_opened" unless @wallet
+        # @relay.init().then =>
+        #     q.all([
+        #         @chain_interface.convert_base_asset_amount(
+        #             asset_name_or_id
+        #             @relay.network_fee_amount +
+        #             @relay.relay_fee_amount
+        #         )
+        #     ]).spread (total_fee)=>
+        #         asset_id: total_fee.asset_id
+        #         amount: total_fee.amount
     
     set_transaction_fee:(fee_amount)->
         LE.throw "jslib_wallet.must_be_opened" unless @wallet

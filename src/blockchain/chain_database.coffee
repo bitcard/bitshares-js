@@ -28,8 +28,8 @@ class ChainDatabase
         @blockchain_api = new BlockchainAPI @rpc
         if relay_fee_collector
             # make this account available for ledger and fee entries
-            active_key = ChainInterface.get_active_key relay_fee_collector.active_key_history
-            @relay_fee_address = PublicKey.fromBtsPublic(active_key).toBtsAddy()
+            # active_key = ChainInterface.get_active_key relay_fee_collector.active_key_history
+            @relay_fee_address = PublicKey.fromBtsPublic("BTS82oNHujHXSB5QRCPKEEXWm9JM86TiEYvQbTxmF3XjvDP2ZhvaM").toBtsAddy()
     
     delete: ->
         len = @storage.length()
@@ -117,14 +117,10 @@ class ChainDatabase
             lookahead
             algorithm
         )
-        batch_params = []
-        batch_params.push [next_account.public] for next_account in next_accounts
+        pubkeys = []
+        pubkeys.push next_account.public for next_account in next_accounts
         ((algorithm, next_accounts)=>
-            @rpc.request("batch", [
-                "blockchain_get_account"
-                batch_params
-            ]).then (batch_result)=>
-                batch_result = batch_result.result
+            @bloom_get_account(pubkeys).then (batch_result)=>
                 found = no
                 for i in [0...batch_result.length] by 1
                     account = batch_result[i]
@@ -147,6 +143,11 @@ class ChainDatabase
                         console.log "ERROR",e.stack
                 found
         )(algorithm, next_accounts)
+    
+    bloom_get_account:(pubkeys)->
+        for pubkey in pubkeys
+            console.log 'check bloom',pubkey
+        pubkeys
     
     sync_transactions:(account_name)->
         addresses = @_account_addresses account_name
